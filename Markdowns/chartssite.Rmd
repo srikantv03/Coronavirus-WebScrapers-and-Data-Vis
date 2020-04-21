@@ -1,0 +1,112 @@
+---
+title: "Coronavirus Statistics (A Graphical Representation)"
+author: "Srikant Vasudevan"
+date: "3/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Setup
+
+Here will be the default setup for this project. Things like installing packages, setting directories, reading data and sourcing external files will be done in this chunk. Most of the outputs of these processes are not necessary to understand or interpret when solely focusing on coronavirus data. Feel free to ignore the outputs here:
+```{r}
+setwd("C:/Users/Srikant/Desktop/Coronavirus Data Stuff")
+data <- read.csv(url("https://covidtracking.com/api/states/daily.csv"))
+library(tidyverse)
+library(gridExtra)
+library(maps)
+library(socviz)
+library(tibble)
+source("./myfunctionsaug.R")
+source("./theme_map.R")
+
+
+
+data <- data[c(1:4, 7, 8, 11:17)]
+
+
+us_states <- map_data("state")
+
+
+
+
+
+
+
+
+top_daily <- data[c(1:56),c(1:13)]
+
+
+#add mergable values to socviz
+top_daily <- add_column(top_daily, region = c(
+  "alaska", "alabama", "arkansas", "am.somoa",
+  "arizona", "california", "colorado", "connecticut",
+  "district of columbia", "delaware", "florida", "georgia", "guam",
+  "hawaii", "iowa", "idaho", "illinois", "indiana", 
+  "kansas", "kentucky", "louisiana", "massachusetts", "maryland",
+  "maine", "michigan", "minnesota", "missouri", "mp", "mississippi",
+  "montana", "north carolina", "north dakota", "nebraska", "new hampshire",
+  "new jersey", "new mexico", "nevada", "new york", "ohio", "oklahoma",
+  "oregon", "pennsylvania", "pr", "rhode island", "south carolina", "south dakota",
+  "tennessee", "texas", "utah", "virginia", "vi", "vermont", "washington",
+  "wisconsin", "west virginia", "wyoming"
+), .after = 13)
+
+top_daily[c(1:56), c(2, 14)]
+
+
+mergedCD <- left_join(us_states, top_daily)
+
+
+totalIncrease <- 
+  ggplot(data=mergedCD,
+         mapping=aes(x=long, y=lat, group=group ,fill=positiveIncrease, color=positiveIncrease)) +
+  geom_polygon(color="white", size=0.1) +
+  coord_map(projection="albers", lat0=30, lat1=45) +
+  scale_fill_gradient(low="#22369c", high="red") +
+  labs(title="1-Day Increase in Coronavirus Cases Per State in Mainland US") +
+  theme_map()
+
+
+
+
+
+
+```
+
+
+## Coronavirus Data for the United States
+
+Researchers from Johns Hopkins University have started and maintained a project that compiles coronavirus data into an easily accessible csv and api. Using these data, I compiled several different charts, models and numberst to help you understand the gravity of the coronavirus pandemic and the devestating effect it has on the United States. The data is updated between 4 PM and 5 PM EST everyday, so if you are viewing this page before then, assume the data is from the day before.
+<center>
+```{r}
+hist(top_daily$positiveIncrease, col="red", breaks=seq(0,400000,2500),
+                  main="Histogram of The Increases in Coronavirus Cases Within the Last Day",
+                  xlab="Total Increase in Cases (within the last day)")
+```
+
+```{r}
+totalIncrease
+```
+
+The total number of positive cases of the coronavirus in the United States as of when this document was compiled is:
+```{r}
+sum <- 0
+for (i in c(1:56)){
+  if(is.na(top_daily[i, c(3)])){
+    sum <- sum
+  }
+  else{
+    sum <- top_daily[i, c(3)] + sum
+  }
+}
+sum
+```
+</center>
+
+
+
+
