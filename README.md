@@ -3,6 +3,6 @@
 
 Currently inside:
 
-Python web scraper - for all domestic (US) coronavirus data. 
-R script - dealing with coronavirus data and visualizations for the data
-R Markdown - easily knittable RMD into an HTML output containing charts and totals for domestic coronavirus data
+- Python web scraper - for all domestic (US) coronavirus data. 
+- R script - dealing with coronavirus data and visualizations for the data
+- R Markdown - easily knittable RMD into an HTML output containing charts and totals for domestic coronavirus data
